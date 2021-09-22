@@ -3,21 +3,25 @@ const path = require('path')
 const { injectCSS, loadSVG } = require("../Util.js")
 
 const appPath = ipcRenderer.sendSync('request-app-path')
+const iconsFolder = path.resolve(appPath, 'assets', 'windowsIcons')
 
 const isMac = process.platform === "darwin" || ipcRenderer.sendSync('isMac')
+
+const { userPreferences } = require("../../main/Store.js")
+
+const useMacControls = userPreferences.get("use-mac-controls")
 
 function createWindowControls() {
   injectCSS(
     path.resolve(appPath, 'src', 'renderer', 'styles', 'windowControls.css')
   )
 
-  const iconsFolder = path.resolve(appPath, 'assets', 'windowsIcons')
   const wrapper = document.createElement('div')
   wrapper.id = 'window-controls-wrapper'
 
-  wrapper.dataset.platform = isMac ? "darwin" : ""
+  wrapper.dataset.platform = useMacControls ? "darwin" : ""
 
-  wrapper.innerHTML = isMac ?
+  wrapper.innerHTML = useMacControls ?
     `
   <div class="mac-button" id="close"></div>
   <div class="mac-button" id="minimize"></div>
@@ -34,8 +38,6 @@ function createWindowControls() {
   </div>`
   return wrapper
 }
-
-
 
 function createWindowsMenu() {
   const windowControlsMenu = createWindowControls()
@@ -77,7 +79,7 @@ function addWindowControlsFunctions(menu) {
     hideMenu()
   }
 
-  if(isMac){
+  if(useMacControls){
     const fullscreen_btn = document.getElementById('fullscreen')
     fullscreen_btn.onclick = () => ipcRenderer.send('fullscreen')
   }else{
@@ -117,7 +119,7 @@ function createMacMenu() {
 }
 
 
-if (isMac) {
+if (useMacControls) {
     createMacMenu()
 } else {
     createWindowsMenu()
