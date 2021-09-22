@@ -16,6 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "electron-store": "^8.0.1",
     "electron-window-state": "^5.0.3"
   }
 }
