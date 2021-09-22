@@ -8,10 +8,9 @@ const {
 } = require('electron')
 const path = require('path')
 const windowStateKeeper = require('electron-window-state')
+const { userPreferences } = require("./Store")
 
 const isMacOS = process.argv.includes("--mac") || process.platform === 'darwin'
-console.log(process.argv);
-// const isMacOS = true // Testando fora do Mac
 
 let win = null
 app.allowRendererProcessReuse = true
@@ -27,11 +26,13 @@ function createWindow() {
     defaultHeight: dimensions.height
   })
 
+  const openInScreenDimensions = userPreferences.get("open-window-in-fullscreen")
+
   win = new BrowserWindow({
-    x: mainWindowState.x,
-    y: mainWindowState.y,
-    width: mainWindowState.width,
-    height: mainWindowState.height,
+    x: openInScreenDimensions ? 0 : mainWindowState.x,
+    y: openInScreenDimensions ? 0 : mainWindowState.y,
+    width: openInScreenDimensions ? dimensions.width : mainWindowState.width,
+    height:openInScreenDimensions ? dimensions.height : mainWindowState.height,
     frame: false,
     icon:
       isMacOS === 'darwin'
