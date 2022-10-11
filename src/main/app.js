@@ -7,6 +7,8 @@ import { checkerURL } from "./utils/check-url"
 
 import "./modules/window-manager"
 
+const isLinux = process.platform === "linux"
+
 let win = null
 app.allowRendererProcessReuse = true
 
@@ -15,7 +17,7 @@ async function createWindow() {
     icon: nativeImage.createFromPath(
       path.join(assetsPath, "assets", "icon.png")
     ),
-    frame: false,
+    frame: isLinux ? true : false,
     titleBarStyle: "customButtonsOnHover",
     webPreferences: {
       nodeIntegration: false,
